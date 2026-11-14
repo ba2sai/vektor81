@@ -1,0 +1,75 @@
+# =====================================================================
+# DOCKER COMPOSE — VEKTOR81: "SHADOW AI & LEY 81 AUDIT APPLIANCE"
+# =====================================================================
+# Diseñado para correr 100% On-Premise en un mini-servidor Linux dentro de la LAN
+# del cliente sin GPU dedicada y con consumo combinado < 500MB RAM.
+#
+# Ejecución:
+#   docker compose up -d --build
+# =====================================================================
+
+services:
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: vektor81-backend
+    restart: unless-stopped
+    environment:
+      - DATABASE_URL=sqlite:///./data/vektor81_audit.db
+      - ADGUARD_URL=http://adguard:3000
+      - ADGUARD_USER=${ADGUARD_USER:-admin}
+      - ADGUARD_PASS=${ADGUARD_PASS:-vektor81admin}
+    volumes:
+      - vektor81_sqlite_data:/app/data
+      - ./agents:/app/agents:ro
+    expose:
+      - "8000"
+    mem_reservation: 512m
+    mem_limit: 2g
+    cpus: 2.0
+    networks:
+      - vektor81_lan
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: vektor81-frontend
+    restart: unless-stopped
+    ports:
+      - "80:80"
+    depends_on:
+      - backend
+    mem_reservation: 64m
+    mem_limit: 256m
+    cpus: 0.5
+    networks:
+      - vektor81_lan
+
+  # Servicio DNS local AdGuard Home para interceptar y registrar consultas a dominios de IA
+  adguard:
+    image: adguard/adguardhome:v0.107.52
+    container_name: vektor81-adguard
+    restart: unless-stopped
+    ports:
+      - "53:53/tcp"
+      - "53:53/udp"
+      - "3000:3000/tcp"
+    volumes:
+      - vektor81_adguard_work:/opt/adguardhome/work
+      - vektor81_adguard_conf:/opt/adguardhome/conf
+    mem_reservation: 256m
+    mem_limit: 1g
+    cpus: 1.0
+    networks:
+      - vektor81_lan
+
+volumes:
+  vektor81_sqlite_data:
+  vektor81_adguard_work:
+  vektor81_adguard_conf:
+
+networks:
+  vektor81_lan:
+    driver: bridge
