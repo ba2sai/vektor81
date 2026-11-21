@@ -1,0 +1,104 @@
+{
+  "version": "2.0.0",
+  "description": "Shared Panama Ley 81 / DE 285 PII test corpus for Python, TypeScript, Edge DLP, and PowerShell parity verification.",
+  "valid_natural_ids": [
+    { "token": "8-888-1234", "expected_kind": "NATURAL_CEDULA", "description": "Standard Panama province 8 cedula" },
+    { "token": "1-710-883", "expected_kind": "NATURAL_CEDULA", "description": "Standard Bocas del Toro province 1 cedula" },
+    { "token": "13-45-9012", "expected_kind": "NATURAL_CEDULA", "description": "Panama Oeste province 13 cedula" },
+    { "token": "10-702-1198", "expected_kind": "NATURAL_CEDULA", "description": "Comarca Guna Yala code 10 cedula" },
+    { "token": "8AV-123-4567", "expected_kind": "NATURAL_AV", "description": "Antes de la Vigencia pre-2006 cedula" },
+    { "token": "12PI-45-6789", "expected_kind": "NATURAL_PI", "description": "Poblacion Indigena cedula" },
+    { "token": "PE-12-4401", "expected_kind": "NATURAL_PE", "description": "Panameno nacido en el extranjero" },
+    { "token": "E-8-104921", "expected_kind": "NATURAL_E", "description": "Extranjero residente" },
+    { "token": "N-20-1920", "expected_kind": "NATURAL_N", "description": "Naturalizado" },
+    { "token": "3-NT-3-33", "expected_kind": "NATURAL_NT", "description": "Numero Tributario extranjero residente" }
+  ],
+  "date_collisions_must_reject": [
+    "12-05-2026",
+    "8-12-2025",
+    "01-01-2024",
+    "13-11-2026",
+    "4-07-1999"
+  ],
+  "corporate_juridica_must_exclude": [
+    { "token": "155-123456-2", "reason": "Sociedad anonima prefix > 13" },
+    { "token": "2668468-1-843222", "reason": "Folio mercantil corporate RUC" },
+    { "token": "1556421-1-784512 DV 45", "reason": "Corporate RUC with DV" },
+    { "token": "842109-1-502918 DV 12", "reason": "Corporate folio RUC with DV" }
+  ],
+  "contextual_documents": [
+    {
+      "id": "corp_without_cedula_veto",
+      "text": "Factura fiscal de Inversiones Balboa Sociedad Anónima S.A., Registro Público 8-123-4567 proveedor B2B",
+      "expect_natural_identity_match": false,
+      "expect_dlp_decision": "veto"
+    },
+    {
+      "id": "corp_with_explicit_cedula_keep",
+      "text": "Representante legal de Inversiones Balboa S.A. portador de la cédula 8-714-2219",
+      "expect_natural_identity_match": true,
+      "expected_tokens": ["8-714-2219"],
+      "expect_dlp_min_score": 0.6
+    },
+    {
+      "id": "sensitive_health_hiv_elevate",
+      "text": "Paciente con cédula 8-888-1234, diagnóstico VIH en expediente de historia clínica CSS",
+      "expect_natural_identity_match": true,
+      "expected_tokens": ["8-888-1234"],
+      "expect_sensitive": true,
+      "expect_dlp_min_score": 0.95
+    },
+    {
+      "id": "sensitive_biometric_union_elevate",
+      "text": "Colaborador E-8-104921 afiliado al sindicato y registro de huella biométrica",
+      "expect_natural_identity_match": true,
+      "expected_tokens": ["E-8-104921"],
+      "expect_sensitive": true,
+      "expect_dlp_min_score": 0.95
+    },
+    {
+      "id": "passport_with_context_detect",
+      "text": "Pasaporte panameño APAP PA1234567 del viajero confirmado",
+      "expect_passport_match": true,
+      "expected_passport": "PA1234567"
+    },
+    {
+      "id": "passport_inventory_code_reject",
+      "text": "Código de inventario AB1234567 en bodega central",
+      "expect_passport_match": false
+    },
+    {
+      "id": "swift_panama_detect",
+      "text": "Transferencia ACH vía SWIFT BAGEPAPAXXX a cuenta de ahorros en Panamá",
+      "expect_swift_match": true,
+      "expected_swift": "BAGEPAPAXXX"
+    },
+    {
+      "id": "swift_foreign_reject",
+      "text": "Transferencia internacional vía código BAGEUS33XXX hacia Nueva York",
+      "expect_swift_match": false
+    },
+    {
+      "id": "luhn_card_valid_detect",
+      "text": "Pago procesado con tarjeta corporativa 4532015112830366 para cuenta bancaria",
+      "expect_card_match": true,
+      "expected_card": "4532015112830366"
+    },
+    {
+      "id": "luhn_card_invalid_reject",
+      "text": "Referencia numérica 4532015112830367 en orden de compra",
+      "expect_card_match": false
+    }
+  ],
+  "ructb_dv_vectors": [
+    { "ruc_input": "8-888-1234", "expected_ructb": "00000000800088801234", "expected_sw": 0, "expected_dv": "49" },
+    { "ruc_input": "1-710-883", "expected_ructb": "00000000100071000883", "expected_sw": 0, "expected_dv": "88" },
+    { "ruc_input": "8AV-123-4567", "expected_ructb": "00000000815012304567", "expected_sw": 0, "expected_dv": "85" },
+    { "ruc_input": "12PI-45-6789", "expected_ructb": "00000001279004506789", "expected_sw": 0, "expected_dv": "62" },
+    { "ruc_input": "PE-12-4401", "expected_ructb": "00000000075001204401", "expected_sw": 0, "expected_dv": "08" },
+    { "ruc_input": "E-8-104921", "expected_ructb": "00000000550008104921", "expected_sw": 0, "expected_dv": "45" },
+    { "ruc_input": "N-20-1920", "expected_ructb": "00000000050002001920", "expected_sw": 0, "expected_dv": "95" },
+    { "ruc_input": "3-NT-3-33", "expected_ructb": "00000000343000300033", "expected_sw": 1, "expected_dv": "03" },
+    { "ruc_input": "13-45-9012", "expected_ructb": "00000001300004509012", "expected_sw": 0, "expected_dv": "44" }
+  ]
+}

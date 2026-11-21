@@ -1,0 +1,59 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Vektor81 v2 Shared API Schemas",
+  "version": "2.0.0",
+  "enums": {
+    "ComponentLayer": [
+      "CONTROL_PLANE",
+      "TUNNEL",
+      "ONPREM_COLLECTOR",
+      "ADGUARD_DNS",
+      "ENDPOINT_AGENT",
+      "DB_CONNECTOR",
+      "SMB_CONNECTOR",
+      "WAZUH_FIM",
+      "CLOUDFLARE_DLP",
+      "CLOUDFLARE_CASB",
+      "LOGPUSH"
+    ],
+    "ComponentStatus": ["ONLINE", "DEGRADED", "OFFLINE", "STALE"],
+    "RegulatoryProfile": ["ANTAI_LEY81", "SBP_001_2022", "SALUD_LEY68"],
+    "ArcoRightType": ["ACCESO", "RECTIFICACION", "CANCELACION", "OPOSICION", "PORTABILIDAD"]
+  },
+  "sla_rules_panama": {
+    "ANTAI_LEY81": {
+      "dsar_access_business_days": 10,
+      "dsar_rectify_cancel_block_business_days": 5,
+      "breach_notification_hours": 72,
+      "general_retention_max_years": 7,
+      "fine_range_pab": [1000, 10000]
+    },
+    "SBP_001_2022": {
+      "dsar_access_business_days": 10,
+      "dsar_rectify_cancel_block_business_days": 5,
+      "breach_notification_hours": 72,
+      "general_retention_max_years": 7,
+      "board_oversight_required": true
+    },
+    "SALUD_LEY68": {
+      "dsar_access_business_days": 10,
+      "dsar_rectify_cancel_block_business_days": 5,
+      "breach_notification_hours": 72,
+      "clinical_retention_min_years_post_mortem": 20,
+      "user_timestamp_audit_required": true
+    }
+  },
+  "breach_5_required_elements_de285_art37": [
+    "what_happened",
+    "compromised_data_types",
+    "measures_adopted",
+    "titular_actions",
+    "contact_point"
+  ],
+  "heartbeat_thresholds_seconds": {
+    "infrastructure_degraded": 300,
+    "infrastructure_offline": 900,
+    "endpoint_stale": 86400,
+    "endpoint_offline": 259200
+  }
+}

@@ -1,0 +1,41 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+.venv/
+venv/
+*.egg-info/
+.pytest_cache/
+
+# Node / JS / TS / Cloudflare
+node_modules/
+dist/
+build/
+.wrangler/
+.dev.vars
+*.tsbuildinfo
+
+# Terraform
+.terraform/
+*.tfstate
+*.tfstate.*
+*.tfvars
+!terraform.tfvars.example
+
+# Databases & local data
+*.db
+*.sqlite
+*.sqlite3
+*.db-wal
+*.db-shm
+data/
+
+# Environment & secrets
+.env
+.env.*
+!.env.example
+
+# Logs & OS
+*.log
+.DS_Store
+Thumbs.db
