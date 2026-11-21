@@ -439,7 +439,7 @@ export function evaluateCisoRisk(inputs: ScoringInputs): CisoRiskEvaluation {
 
   if (shadowAiScore >= 30 || unprotectedCrossBorder > 0) {
     legalFindings.push({
-      citation: 'Ley 81 de 2019 Art. 6, 15 y 33; DE 285 Art. 28-31 (Transferencia Internacional)',
+      citation: 'Ley 81 de 2019 Arts. 25, 32-33 y 41.4; DE 285 Arts. 40, 46 y 48 (Transferencia Internacional)',
       severity: shadowAiScore >= 65 || unprotectedCrossBorder > 0 ? 'CRITICAL' : 'HIGH',
       vector: 'SHADOW_AI_CROSS_BORDER',
       summary: `${unblockedShadowHits} consultas Shadow AI sin bloqueo hacia ${unblockedDomains.size} dominios LLM y ${unprotectedCrossBorder} transferencias internacionales sin DPA activo.`,
@@ -450,8 +450,8 @@ export function evaluateCisoRisk(inputs: ScoringInputs): CisoRiskEvaluation {
     legalFindings.push({
       citation:
         inputs.tenant.regulatory_profile === 'SALUD_LEY68'
-          ? 'Ley 68 de 2003 (Expediente Clínico 20 años post-mortem) y Ley 81 Art. 12 y 15'
-          : 'Ley 81 de 2019 Art. 15 y DE 285 (Deber de Custodia y Retención Máxima)',
+          ? 'Ley 68 de 2003 Arts. 38 y 49 (Expediente Clínico ≥20 años post-mortem) y Ley 81 Arts. 4, 6 y 13'
+          : 'Ley 81 de 2019 Arts. 4, 6, 13 y 15; DE 285 Art. 4 (Custodia y Retención Máxima)',
       severity: sensitiveFindings > 0 || retentionViolations > 0 ? 'CRITICAL' : 'HIGH',
       vector: 'STORAGE_EXPOSURE',
       summary: `${totalFindings} hallazgos de PII en repositorios (${sensitiveFindings} sensibles, ${retentionViolations} violaciones de retención).`,
@@ -469,7 +469,7 @@ export function evaluateCisoRisk(inputs: ScoringInputs): CisoRiskEvaluation {
 
   if (dpoMissing || overdueDsars > 0) {
     legalFindings.push({
-      citation: 'Ley 81 de 2019 Art. 25-27 y DE 285 (DPO y Plazos ARCO 5/10 días hábiles)',
+      citation: 'Ley 81 de 2019 Arts. 15-16 y 45; DE 285 Arts. 43, 44 y 47 (DPO y Plazos ARCO-P 5/10 días hábiles)',
       severity: overdueDsars > 0 ? 'HIGH' : 'MEDIUM',
       vector: 'GOVERNANCE_ARCO',
       summary: `${dpoMissing ? 'DPO pendiente de registro oficial ante ANTAI; ' : ''}${overdueDsars} solicitudes ARCO vencidas.`,
