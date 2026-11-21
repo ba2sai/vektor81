@@ -1,25 +1,44 @@
 # =====================================================================
-# DOCKER COMPOSE — VEKTOR81: "SHADOW AI & LEY 81 AUDIT APPLIANCE"
+# DOCKER COMPOSE — VEKTOR81 v2: HYBRID ON-PREMISE COLLECTOR + CLOUDFLARE TUNNEL
 # =====================================================================
-# Diseñado para correr 100% On-Premise en un mini-servidor Linux dentro de la LAN
-# del cliente sin GPU dedicada y con consumo combinado < 500MB RAM.
+# Diseñado para arquitectura híbrida Ley 81 / DE 285 (Panamá):
+#   - Datos PII crudos se procesan y permanecen dentro de la LAN del cliente.
+#   - Solo métricas enmascaradas y hashes SHA-256 salen vía cloudflared (outbound-only)
+#     hacia el Control Plane en Cloudflare Workers.
 #
-# Ejecución:
+# Ejecución estándar (sin túnel):
 #   docker compose up -d --build
+#
+# Ejecución con Cloudflare Zero Trust Tunnel habilitado:
+#   docker compose --profile tunnel up -d --build
 # =====================================================================
 
 services:
-  backend:
+  onprem-collector:
     build:
-      context: ./backend
-      dockerfile: Dockerfile
-    container_name: vektor81-backend
+      context: .
+      dockerfile: onprem-collector/Dockerfile
+    container_name: vektor81-onprem-collector
     restart: unless-stopped
     environment:
-      - DATABASE_URL=sqlite:///./data/vektor81_audit.db
-      - ADGUARD_URL=http://adguard:3000
+      - VEKTOR81_ENV=${VEKTOR81_ENV:-production}
+      - ONPREM_API_TOKEN=${ONPREM_API_TOKEN:-}
+      - ALLOWED_ORIGINS=${ALLOWED_ORIGINS:-http://localhost,http://localhost:5173}
+      - ENABLE_DEMO_TOOLS=${ENABLE_DEMO_TOOLS:-false}
+      - DATABASE_URL=${DATABASE_URL:-sqlite:///./data/vektor81_collector.db}
+      - TENANT_ID=${TENANT_ID:-default-tenant}
+      - REGULATORY_PROFILE=${REGULATORY_PROFILE:-ANTAI_LEY81}
+      - COLLECTOR_ID=${COLLECTOR_ID:-collector-01}
+      - CONTROL_PLANE_URL=${CONTROL_PLANE_URL:-}
+      - COLLECTOR_TOKEN=${COLLECTOR_TOKEN:-}
+      - CLOUDFLARED_METRICS_URL=${CLOUDFLARED_METRICS_URL:-http://cloudflared:2000/ready}
+      - ADGUARD_URL=${ADGUARD_URL:-http://adguard:3000}
       - ADGUARD_USER=${ADGUARD_USER:-admin}
-      - ADGUARD_PASS=${ADGUARD_PASS:-vektor81admin}
+      - ADGUARD_PASS=${ADGUARD_PASS:-}
+      - WAZUH_API_URL=${WAZUH_API_URL:-}
+      - WAZUH_API_USER=${WAZUH_API_USER:-}
+      - WAZUH_API_PASS=${WAZUH_API_PASS:-}
+      - WAZUH_VERIFY_TLS=${WAZUH_VERIFY_TLS:-true}
     volumes:
       - vektor81_sqlite_data:/app/data
       - ./agents:/app/agents:ro
@@ -29,7 +48,9 @@ services:
     mem_limit: 2g
     cpus: 2.0
     networks:
-      - vektor81_lan
+      vektor81_lan:
+        aliases:
+          - backend
 
   frontend:
     build:
@@ -37,10 +58,12 @@ services:
       dockerfile: Dockerfile
     container_name: vektor81-frontend
     restart: unless-stopped
+    environment:
+      - CONTROL_PLANE_UPSTREAM=${CONTROL_PLANE_URL:-http://control-plane:8787}
     ports:
       - "80:80"
     depends_on:
-      - backend
+      - onprem-collector
     mem_reservation: 64m
     mem_limit: 256m
     cpus: 0.5
@@ -62,6 +85,25 @@ services:
     mem_reservation: 256m
     mem_limit: 1g
     cpus: 1.0
+    networks:
+      - vektor81_lan
+
+  # Túnel saliente Zero Trust (Cloudflare Tunnel) — activar con: --profile tunnel
+  cloudflared:
+    image: cloudflare/cloudflared:latest
+    container_name: vektor81-cloudflared
+    profiles: ["tunnel"]
+    restart: unless-stopped
+    command: tunnel --no-autoupdate --metrics 0.0.0.0:2000 run
+    environment:
+      - TUNNEL_TOKEN=${CLOUDFLARE_TUNNEL_TOKEN:-}
+    expose:
+      - "2000"
+    depends_on:
+      - onprem-collector
+    mem_reservation: 64m
+    mem_limit: 256m
+    cpus: 0.5
     networks:
       - vektor81_lan
 

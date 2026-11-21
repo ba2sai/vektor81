@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { clsx, type ClassValue } from 'clsx';
 import { twMerge } from 'tailwind-merge';
+import type { BadgeVariant } from '../../utils/format';
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -13,7 +14,7 @@ export function Card({
   return (
     <div
       className={cn(
-        'rounded-xl border border-slate-800 bg-slate-900/80 text-slate-100 shadow-lg backdrop-blur-sm',
+        'rounded-xl border border-slate-800/90 bg-slate-900/80 text-slate-100 shadow-lg backdrop-blur-sm',
         className
       )}
       {...props}
@@ -39,7 +40,7 @@ export function CardTitle({
 }: React.HTMLAttributes<HTMLHeadingElement>) {
   return (
     <h3
-      className={cn('text-base font-semibold leading-none tracking-tight text-white', className)}
+      className={cn('text-base font-semibold leading-snug tracking-tight text-white', className)}
       {...props}
     />
   );
@@ -69,14 +70,15 @@ export function Badge({
   variant = 'default',
   ...props
 }: React.HTMLAttributes<HTMLSpanElement> & {
-  variant?: 'default' | 'destructive' | 'warning' | 'success' | 'outline';
+  variant?: BadgeVariant;
 }) {
-  const variants: Record<string, string> = {
+  const variants: Record<BadgeVariant, string> = {
     default: 'bg-sky-500/15 text-sky-300 border-sky-500/30',
-    destructive: 'bg-red-500/15 text-red-300 border-red-500/30',
-    warning: 'bg-amber-500/15 text-amber-300 border-amber-500/30',
-    success: 'bg-emerald-500/15 text-emerald-300 border-emerald-500/30',
+    destructive: 'bg-red-500/15 text-red-300 border-red-500/40',
+    warning: 'bg-amber-500/15 text-amber-300 border-amber-500/40',
+    success: 'bg-emerald-500/15 text-emerald-300 border-emerald-500/40',
     outline: 'bg-slate-800/70 text-slate-300 border-slate-700',
+    purple: 'bg-purple-500/15 text-purple-300 border-purple-500/40',
   };
   return (
     <span

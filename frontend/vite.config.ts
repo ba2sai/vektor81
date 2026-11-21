@@ -6,8 +6,12 @@ export default defineConfig({
   server: {
     port: 5173,
     proxy: {
-      '/api': {
-        target: 'http://localhost:8000',
+      '/api/v2': {
+        target: process.env.VITE_CONTROL_PLANE_URL || 'http://127.0.0.1:8787',
+        changeOrigin: true,
+      },
+      '/api/v1': {
+        target: process.env.VITE_COLLECTOR_URL || 'http://127.0.0.1:8000',
         changeOrigin: true,
       },
     },
