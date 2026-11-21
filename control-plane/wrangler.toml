@@ -1,0 +1,22 @@
+name = "vektor81-control-plane"
+main = "src/index.ts"
+compatibility_date = "2026-10-15"
+
+[[d1_databases]]
+binding = "DB"
+database_name = "vektor81-db"
+database_id = "00000000-0000-0000-0000-000000000000"
+migrations_dir = "migrations"
+
+[[r2_buckets]]
+binding = "EVIDENCE_BUCKET"
+bucket_name = "vektor81-evidence"
+
+[triggers]
+crons = ["*/5 * * * *"]
+
+[vars]
+ALLOWED_ORIGINS = "http://localhost:5173,http://127.0.0.1:5173,http://localhost"
+ENABLE_DEMO_TOOLS = "true"
+ENVIRONMENT = "development"
+CONTROL_PLANE_ENV = "development"

@@ -1,0 +1,29 @@
+# Example Panamanian Enterprise Tenant Instantiation (SBP Acuerdo No. 001-2022)
+# Copy to terraform.tfvars and populate sensitive credentials via environment variables
+# or your secrets manager before running `terraform apply`.
+
+account_id                = "00000000000000000000000000000000"
+tenant_id                 = "banco-istmo"
+tenant_name               = "Banco del Istmo Panama S.A."
+regulatory_profile        = "SBP_001_2022"
+validation_worker_name    = "vektor81-dlp-validator"
+control_plane_webhook_url = "https://control.vektor81.example.pa/api/v2/ingest/casb-webhook"
+webhook_secret            = "REPLACE_WITH_CF_WEBHOOK_AUTH_SECRET"
+
+# Base64-encoded RSA/ECDH public key controlled solely by the Panamanian enterprise
+customer_dlp_public_key   = "REPLACE_WITH_BASE64_CUSTOMER_PUBLIC_KEY"
+dlp_payload_masking_level = "partial"
+
+# Zero-egress Cloudflare R2 Logpush destination URI
+r2_logpush_destination_conf = "r2://vektor81-forensic-vault/tenants/banco-istmo?account-id=00000000000000000000000000000000&access-key-id=REPLACE_ACCESS_KEY&secret-access-key=REPLACE_SECRET_KEY"
+
+tunnel_name              = "vektor81-collector-banco-istmo"
+data_localization_region = "us"
+ai_gateway_id            = "vektor81-ai-gateway-banco-istmo"
+enable_logpush           = true
+
+# Optional CASB Integrations (enable once credentials/IDs are provisioned)
+casb_google_workspace_enabled = false
+casb_box_enabled              = false
+casb_m365_oauth_integration_id = ""
+casb_aws_s3_integration_id     = ""

@@ -1,0 +1,26 @@
+{
+  "name": "@vektor81/panama-pii-ts",
+  "version": "2.0.0",
+  "private": true,
+  "description": "TypeScript Panama Ley 81 / DE 285 PII detection, RUCTB Mod-11 DV validator, masking, and hashing engine.",
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./src/index.ts",
+      "import": "./src/index.ts",
+      "default": "./dist/index.js"
+    }
+  },
+  "scripts": {
+    "test": "vitest run",
+    "typecheck": "tsc --noEmit && tsc -p tsconfig.test.json --noEmit",
+    "build": "tsc"
+  },
+  "devDependencies": {
+    "@types/node": "^24.0.0",
+    "typescript": "^5.8.0",
+    "vitest": "^4.1.12"
+  }
+}

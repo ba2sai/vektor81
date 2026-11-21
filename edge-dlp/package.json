@@ -1,0 +1,24 @@
+{
+  "name": "vektor81-edge-dlp",
+  "version": "2.0.0",
+  "private": true,
+  "description": "Cloudflare Zero Trust DLP Custom Validation Worker for Panama Ley 81 / DE 285.",
+  "type": "module",
+  "scripts": {
+    "dev": "wrangler dev",
+    "deploy": "wrangler deploy",
+    "test": "vitest run",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@cloudflare/zt-types": "^2026.10.1",
+    "@vektor81/panama-pii-ts": "file:../packages/panama-pii-ts"
+  },
+  "devDependencies": {
+    "@cloudflare/workers-types": "^5.20261119.1",
+    "@types/node": "^24.0.0",
+    "typescript": "^5.8.0",
+    "vitest": "^4.1.12",
+    "wrangler": "^4.166.0"
+  }
+}

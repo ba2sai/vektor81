@@ -1,0 +1,17 @@
+[build-system]
+requires = ["setuptools>=68.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "panama-pii"
+version = "2.0.0"
+description = "Pure-Python Panama Ley 81 / DE 285 PII detection, RUCTB Mod-11 DV validator, masking, and optional Presidio adapter."
+requires-python = ">=3.11"
+dependencies = []
+
+[project.optional-dependencies]
+presidio = ["presidio-analyzer>=2.2.0"]
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["panama_pii*"]

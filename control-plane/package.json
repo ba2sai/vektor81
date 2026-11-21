@@ -1,0 +1,22 @@
+{
+  "name": "vektor81-control-plane",
+  "version": "2.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "wrangler dev",
+    "test": "vitest run",
+    "typecheck": "tsc --noEmit",
+    "db:migrate:local": "wrangler d1 migrations apply vektor81-db --local"
+  },
+  "dependencies": {
+    "hono": "^4.13.0",
+    "zod": "^4.3.0"
+  },
+  "devDependencies": {
+    "@cloudflare/workers-types": "^5.20261121.1",
+    "typescript": "^5.9.0",
+    "vitest": "^4.0.0",
+    "wrangler": "^4.166.0"
+  }
+}

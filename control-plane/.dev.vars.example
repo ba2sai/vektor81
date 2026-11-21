@@ -1,0 +1,2 @@
+# Copy to .dev.vars for local wrangler dev (never commit real secrets)
+VEKTOR81_DEV_API_KEY=vektor81-local-dev-token

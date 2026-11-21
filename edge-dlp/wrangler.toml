@@ -1,0 +1,4 @@
+name = "vektor81-dlp-validator"
+main = "src/index.ts"
+compatibility_date = "2026-10-15"
+workers_dev = true
